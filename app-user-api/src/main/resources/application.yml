@@ -1,0 +1,12 @@
+spring:
+    jpa:
+        show-sql: true
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        generate-ddl: true
+        defer-datasource-initialization: true
+    
+    datasource:
+        url: jdbc:postgresql://localhost:5432/bootcamp
+        username: postgres
+        password: postgres
