@@ -1,10 +1,10 @@
 HELP.md
 
 ### Maven ###
-target/
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+/target/
+/mvnw.cmd/
+/mvn/
+/.mvn/wrapper/
 
 ### STS ###
 .apt_generated
