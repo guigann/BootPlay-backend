@@ -1,4 +1,4 @@
-package br.com.sysmap.bootcamp;
+package br.com.sysmap.bootcamp.domain.web;
 
 import java.util.List;
 

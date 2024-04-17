@@ -1,0 +1,25 @@
+version: '3.2'
+services:
+  rabbitmq_bootcamp:
+    build:
+      context: ./rabbitmq
+    image: guigan/rabbitmq_bootcamp:latest
+    ports:
+      - 15672:15672
+      - 5672:5672
+    container_name: rabbitmq_bootcamp
+    networks:
+      - backend
+      
+  postgres_bootcamp:
+    build:
+      context: ./postgres
+    image: guigan/postgres_bootcamp:latest
+    ports:
+      - 5432:5432
+    container_name: postgres_bootcamp
+    networks:
+      - backend
+networks:
+  backend:
+    driver: "bridge"

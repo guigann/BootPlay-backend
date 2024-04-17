@@ -2,6 +2,13 @@
     "configurations": [
       {
         "type": "java",
+        "name": "BootcampSysmap2024IntegrationApiApplication",
+        "request": "launch",
+        "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024IntegrationApiApplication",
+        "args": "--spring.profiles.active=local"
+      },
+      {
+        "type": "java",
         "name": "BootcampSysmap2024Application",
         "request": "launch",
         "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024Application",
