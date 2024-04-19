@@ -1,11 +1,10 @@
+
 spring:
-  jpa:
-    show-sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    defer-datasource-initialization: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bootcamp
-    username: bootcamp
-    password: bootcamppass
+    application:
+        name:
+            Bootcamp Sysmap 2024 - Guilherme Campos de Melo
+
+server:
+    port: 8082
+    servlet:
+        context-path: /api
