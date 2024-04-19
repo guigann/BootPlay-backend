@@ -1,6 +1,8 @@
 package br.com.sysmap.bootcamp.config;
 
-import br.com.sysmap.bootcamp.domain.listeners.WalletListener;
+// import br.com.sysmap.bootcamp.domain.listeners.WalletListener;
+// import br.com.sysmap.bootcamp.domain.service.WalletService;
+
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -22,10 +24,10 @@ public class RabbitConfig {
         return new Queue("WalletQueue");
     }
 
-    @Bean
-    public WalletListener receiver() {
-        return new WalletListener();
-    }
+    // @Bean
+    // public WalletListener receiver() {
+    //     return new WalletListener();
+    // }
 
     @Bean
     public SimpleMessageConverter converter() {

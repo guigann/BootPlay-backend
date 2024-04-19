@@ -1,14 +1,15 @@
 package br.com.sysmap.bootcamp.domain.repository;
 
 import br.com.sysmap.bootcamp.domain.entities.Users;
+import br.com.sysmap.bootcamp.domain.entities.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
-    Optional<Users> findByEmail(String email);
+    Optional<Wallet> findByUsers(Users users);
     
 }

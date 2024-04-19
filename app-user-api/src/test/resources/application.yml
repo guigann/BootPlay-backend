@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true
+  datasource:  
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa

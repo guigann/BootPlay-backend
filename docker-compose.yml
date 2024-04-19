@@ -29,6 +29,7 @@ services:
       - 8081:8081
     container_name: app-user-api
     environment:
+      - RABBIT_HOST=rabbitmq_bootcamp
       - POSTGRES_URL=postgres_bootcamp
       - POSTGRES_USER=bootcamp
       - POSTGRES_PASSWORD=bootcamppass
