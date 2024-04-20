@@ -28,9 +28,9 @@ public class SpotifyApi {
                 .limit(30)
                 .build().execute().getItems()).stream()
                 .peek(album -> album.setValue(BigDecimal
-                        .valueOf(Math.random() * 100) 
+                        .valueOf(Math.random() * 100)
                         .setScale(2, RoundingMode.HALF_EVEN)))
-                        .toList();
+                .toList();
 
     }
 

@@ -4,10 +4,14 @@ package br.com.sysmap.bootcamp.config;
 // import br.com.sysmap.bootcamp.domain.service.WalletService;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+
+import br.com.sysmap.bootcamp.domain.listeners.WalletListener;
+import br.com.sysmap.bootcamp.domain.service.WalletService;
 
 import java.util.List;
 
@@ -24,10 +28,10 @@ public class RabbitConfig {
         return new Queue("WalletQueue");
     }
 
-    // @Bean
-    // public WalletListener receiver() {
-    //     return new WalletListener();
-    // }
+    @Bean
+    public WalletListener receiver(WalletService walletService) {
+        return new WalletListener(walletService);
+    }
 
     @Bean
     public SimpleMessageConverter converter() {

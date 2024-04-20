@@ -3,6 +3,7 @@ package br.com.sysmap.bootcamp.domain.service;
 import br.com.sysmap.bootcamp.domain.entities.Points;
 import br.com.sysmap.bootcamp.domain.entities.Users;
 import br.com.sysmap.bootcamp.domain.entities.Wallet;
+import br.com.sysmap.bootcamp.domain.exceptions.ResourceAlreadyExistsException;
 import br.com.sysmap.bootcamp.domain.exceptions.ResourceNotFoundException;
 import br.com.sysmap.bootcamp.domain.repository.WalletRepository;
 import br.com.sysmap.bootcamp.dto.WalletDto;
@@ -13,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,7 +36,7 @@ public class WalletService {
         // criado, e sua existencia ja havia sido validada
         Optional<Wallet> walletOptional = this.repository.findByUsers(user);
         if (walletOptional.isPresent()) {
-            throw new RuntimeException("User already have a wallet");
+            throw new ResourceAlreadyExistsException("Records already found for this user: user already have a wallet");
         }
 
         log.info("Creating wallet: {}");
@@ -51,13 +51,9 @@ public class WalletService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Wallet credit(BigDecimal value) {
-        // tentar reutilizar essa declaração
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        Users user = usersService.findByEmail(userEmail);
+        Users user = getUser();
 
-        Wallet wallet = repository.findByUsers(user)
-                .orElseThrow(() -> new ResourceNotFoundException("No records for this user"));
+        Wallet wallet = getWallet(user);
 
         wallet.setBalance(wallet.getBalance().add(value));
         wallet.setLastUpdate(LocalDateTime.now());
@@ -69,8 +65,7 @@ public class WalletService {
     public void debit(WalletDto walletDto) {
         Users user = usersService.findByEmail(walletDto.getEmail());
 
-        Wallet wallet = repository.findByUsers(user)
-                .orElseThrow(() -> new ResourceNotFoundException("No records for this user"));
+        Wallet wallet = getWallet(user);
 
         wallet.setBalance(wallet.getBalance().subtract(walletDto.getValue()));
 
@@ -83,14 +78,30 @@ public class WalletService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Wallet getByUser() {
-        // tentar reutilizar essa declaração
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        Users user = usersService.findByEmail(userEmail);
+        Users user = getUser();
 
         log.info("Getting wallet: {}");
-        return this.repository.findByUsers(user)
-                .orElseThrow(() -> new ResourceNotFoundException("No records for this user"));
+        return getWallet(user);
     }
 
+    private Users getUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal().toString();
+        return usersService.findByEmail(username);
+    }
+
+    private Wallet getWallet(Users user) {
+        return this.repository.findByUsers(user)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("No records for this user: user does not have a wallet"));
+    }
+
+    // @Transactional(propagation = Propagation.REQUIRED)
+    // public boolean isBalanceSufficient(BigDecimal value) {
+    // Wallet wallet = repository.findByUsers(getUser())
+    // .orElseThrow(() -> new ResourceNotFoundException("No records for this
+    // user"));
+
+    // return wallet.getBalance().compareTo(value) >= 0;
+    // }
 }

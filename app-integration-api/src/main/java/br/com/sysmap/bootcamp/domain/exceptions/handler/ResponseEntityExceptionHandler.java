@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import br.com.sysmap.bootcamp.domain.exceptions.ExceptionResponse;
-import br.com.sysmap.bootcamp.domain.exceptions.InvalidFieldException;
 import br.com.sysmap.bootcamp.domain.exceptions.ResourceAlreadyExistsException;
 import br.com.sysmap.bootcamp.domain.exceptions.ResourceNotFoundException;
 
@@ -40,18 +39,6 @@ public class ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex,
-            WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                new Date(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidFieldException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidFieldException(InvalidFieldException ex,
             WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),

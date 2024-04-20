@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sysmap.bootcamp.domain.entities.Users;
+import br.com.sysmap.bootcamp.domain.exceptions.InvalidFieldException;
+import br.com.sysmap.bootcamp.domain.exceptions.ResourceAlreadyExistsException;
 import br.com.sysmap.bootcamp.domain.exceptions.ResourceNotFoundException;
 import br.com.sysmap.bootcamp.domain.repository.UsersRepository;
 import br.com.sysmap.bootcamp.dto.AuthDto;
@@ -43,11 +45,12 @@ public class UsersService implements UserDetailsService {
 
         Optional<Users> usersOptional = this.repository.findByEmail(user.getEmail());
         if (usersOptional.isPresent()) {
-            throw new RuntimeException("User already exists");
+            throw new ResourceAlreadyExistsException("Records already found for this user: user already exists");
         }
 
-        if(user.getName().isEmpty() || user.getName().isBlank() || user.getEmail().isEmpty() || user.getEmail().isBlank() || user.getPassword().isEmpty() || user.getPassword().isBlank()){
-            throw new NullPointerException("User with invalid fields: null, empty or blank");
+        if (user.getName().isEmpty() || user.getName().isBlank() || user.getEmail().isEmpty()
+                || user.getEmail().isBlank() || user.getPassword().isEmpty() || user.getPassword().isBlank()) {
+            throw new InvalidFieldException("User with invalid fields: null, empty or blank");
         }
 
         user = user.toBuilder().password(this.encoder.encode(user.getPassword())).build();
@@ -64,7 +67,7 @@ public class UsersService implements UserDetailsService {
         log.info("Updating user: {}", user);
 
         var entity = repository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID: user does not exists"));
 
         return this.repository.save(Users.builder()
                 .Id(entity.getId())
@@ -85,14 +88,14 @@ public class UsersService implements UserDetailsService {
         log.info("Getting user: {}");
 
         return this.repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID: user does not exists"));
     }
 
     public AuthDto auth(AuthDto authDto) {
         Users user = this.findByEmail(authDto.getEmail());
 
         if (!this.encoder.matches(authDto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new ResourceNotFoundException("Invalid password");
         }
 
         StringBuilder password = new StringBuilder().append(user.getEmail()).append(":").append(user.getPassword());
@@ -122,6 +125,7 @@ public class UsersService implements UserDetailsService {
     }
 
     public Users findByEmail(String email) {
-        return this.repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return this.repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found: user does not exists"));
     }
 }
