@@ -5,6 +5,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,13 @@ public class UsersService implements UserDetailsService {
 
     private final UsersRepository repository;
     private final PasswordEncoder encoder;
+    private WalletService walletService;
+
+    // Setter injection for WalletService to fix circular dependency
+    @Autowired
+    public void setWalletService(WalletService walletService) {
+        this.walletService = walletService;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Users create(Users user) {
@@ -38,13 +46,17 @@ public class UsersService implements UserDetailsService {
             throw new RuntimeException("User already exists");
         }
 
+        if(user.getName().isEmpty() || user.getName().isBlank() || user.getEmail().isEmpty() || user.getEmail().isBlank() || user.getPassword().isEmpty() || user.getPassword().isBlank()){
+            throw new NullPointerException("User with invalid fields: null, empty or blank");
+        }
+
         user = user.toBuilder().password(this.encoder.encode(user.getPassword())).build();
 
-        // Aqui deve se criar uma wallet para o user
-        // walletService.create(user);
-
         log.info("Creating user: {}", user);
-        return this.repository.save(user);
+        Users savedUser = this.repository.save(user);
+        walletService.create(user);
+
+        return savedUser;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

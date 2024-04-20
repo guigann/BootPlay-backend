@@ -5,6 +5,7 @@
         "name": "BootcampSysmap2024IntegrationApiApplication",
         "request": "launch",
         "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024IntegrationApiApplication",
+        "projectName": "app-integration-api",
         "args": "--spring.profiles.active=local"
       },
       {

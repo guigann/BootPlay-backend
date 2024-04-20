@@ -2,6 +2,7 @@ package br.com.sysmap.bootcamp.web;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,8 +31,7 @@ public class UsersController {
     @Operation(summary = "Create a user")
     @PostMapping("/create")
     public ResponseEntity<Users> save(@RequestBody Users user) {
-        // Mudar Http Status Code para CREATED
-        return ResponseEntity.ok(this.service.create(user));
+        return new ResponseEntity<>(this.service.create(user), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a user")
@@ -42,14 +42,14 @@ public class UsersController {
 
     @Operation(summary = "List users")
     @GetMapping({ "", "/" })
-    public List<Users> get() {
-        return service.get();
+    public ResponseEntity<List<Users>> get() {
+        return ResponseEntity.ok(service.get());
     }
 
     @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
-    public Users get(@PathVariable("id") Long id) {
-        return service.getById(id);
+    public ResponseEntity<Users> get(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 
     @Operation(summary = "Auth user")

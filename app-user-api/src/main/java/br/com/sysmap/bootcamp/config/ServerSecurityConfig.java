@@ -25,7 +25,6 @@ public class ServerSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(
-                    // "/users",
                         "/users/create",
                         "/users/auth",
                         "/api/auth/**",

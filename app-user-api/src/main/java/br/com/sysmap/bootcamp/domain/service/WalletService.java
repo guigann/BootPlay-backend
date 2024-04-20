@@ -12,16 +12,25 @@ import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 public class WalletService {
 
-    private final UsersService usersService;
-    private final WalletRepository repository;
+    private final BigDecimal DEFAULT_BALANCE = new BigDecimal(1000);
+    private final Long DEFAULT_POINTS = 0L;
 
+    private final WalletRepository repository;
+    private final UsersService usersService;
+
+    @Transactional(propagation = Propagation.REQUIRED)
     public Wallet create(Users user) {
         // Talvez nao seja necessaria essa validacao, pois o usuario ainda nao foi
         // criado, e sua existencia ja havia sido validada
@@ -30,31 +39,33 @@ public class WalletService {
             throw new RuntimeException("User already have a wallet");
         }
 
-        // Aqui deve se criar uma wallet para o user
-
         log.info("Creating wallet: {}");
         return this.repository.save(
                 Wallet.builder()
-                        .balance(BigDecimal.valueOf(1000))
-                        .points(0L)
+                        .balance(DEFAULT_BALANCE)
+                        .points(DEFAULT_POINTS)
                         .lastUpdate(LocalDateTime.now())
                         .users(user)
                         .build());
     }
 
-    // public void credit(BigDecimal value) {
-    // Users user = usersService.findByEmail(username);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Wallet credit(BigDecimal value) {
+        // tentar reutilizar essa declaração
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        Users user = usersService.findByEmail(userEmail);
 
-    // Wallet wallet = repository.findByUsers(user)
-    // .orElseThrow(() -> new ResourceNotFoundException("No records for this
-    // user"));
+        Wallet wallet = repository.findByUsers(user)
+                .orElseThrow(() -> new ResourceNotFoundException("No records for this user"));
 
-    // wallet.setBalance(wallet.getBalance().add(walletDto.getValue()));
-    // wallet.setLastUpdate(LocalDateTime.now());
+        wallet.setBalance(wallet.getBalance().add(value));
+        wallet.setLastUpdate(LocalDateTime.now());
 
-    // repository.save(wallet);
-    // }
+        return repository.save(wallet);
+    }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void debit(WalletDto walletDto) {
         Users user = usersService.findByEmail(walletDto.getEmail());
 
@@ -68,6 +79,18 @@ public class WalletService {
         wallet.setLastUpdate(date);
 
         repository.save(wallet);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Wallet getByUser() {
+        // tentar reutilizar essa declaração
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        Users user = usersService.findByEmail(userEmail);
+
+        log.info("Getting wallet: {}");
+        return this.repository.findByUsers(user)
+                .orElseThrow(() -> new ResourceNotFoundException("No records for this user"));
     }
 
 }
