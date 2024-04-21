@@ -9,15 +9,15 @@ import lombok.Setter;
 @Setter
 public class AuthDto {
 
+    private Long id;
     private String email;
     private String password;
-    private Long id;
     private String token;
 
-    public AuthDto(String email, String password, Long id, String token) {
+    public AuthDto(Long id, String email, String password, String token) {
+        this.id = id;
         this.email = email;
         this.password = password;
-        this.id = id;
         this.token = token;
     }
 

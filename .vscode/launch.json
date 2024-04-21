@@ -1,20 +1,20 @@
 {
-    "configurations": [
-      {
-        "type": "java",
-        "name": "BootcampSysmap2024IntegrationApiApplication",
-        "request": "launch",
-        "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024IntegrationApiApplication",
-        "projectName": "app-integration-api",
-        "args": "--spring.profiles.active=local"
-      },
-      {
-        "type": "java",
-        "name": "BootcampSysmap2024Application",
-        "request": "launch",
-        "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024Application",
-        "projectName": "app-user-api",
-        "args": "--spring.profiles.active=local"
-      }
-    ]
-  }
+  "configurations": [
+    {
+      "type": "java",
+      "name": "BootcampSysmap2024IntegrationApiApplication",
+      "request": "launch",
+      "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024IntegrationApiApplication",
+      "projectName": "app-integration-api",
+      "args": "--spring.profiles.active=local"
+    },
+    {
+      "type": "java",
+      "name": "BootcampSysmap2024Application",
+      "request": "launch",
+      "mainClass": "br.com.sysmap.bootcamp.BootcampSysmap2024Application",
+      "projectName": "app-user-api",
+      "args": "--spring.profiles.active=local"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 package br.com.sysmap.bootcamp.domain.listeners;
 
+import br.com.sysmap.bootcamp.domain.entities.Users;
+import br.com.sysmap.bootcamp.domain.service.UsersService;
 import br.com.sysmap.bootcamp.domain.service.WalletService;
 import br.com.sysmap.bootcamp.dto.WalletDto;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 public class WalletListener {
 
     private final WalletService walletService;
+    // provisório, essa inejcção de dependencias não poderia estar aqui
+    private final UsersService usersService;
 
     // A validação de saldo está com problemas, o album está sendo criado mesmo com
     // saldo insuficiente, é um problema no método save de AlbumService
@@ -28,5 +32,11 @@ public class WalletListener {
         // } else {
         // throw new RuntimeException("Insufficient balance to make the purchase");
         // }
+    }
+
+    @RabbitHandler
+    public void receive(String email) {
+        Users user = usersService.findByEmail(email);
+        walletService.create(user);
     }
 }

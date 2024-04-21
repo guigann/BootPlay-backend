@@ -5,7 +5,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,32 +32,30 @@ public class UsersService implements UserDetailsService {
 
     private final UsersRepository repository;
     private final PasswordEncoder encoder;
-    private WalletService walletService;
-
-    // Setter injection for WalletService to fix circular dependency
-    @Autowired
-    public void setWalletService(WalletService walletService) {
-        this.walletService = walletService;
-    }
+    private final RabbitTemplate rabbitTemplate;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Users create(Users user) {
+        String name = user.getName();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        
+        if (name == null || name.isEmpty() || name.isBlank() ||
+                email == null || email.isEmpty() || email.isBlank() ||
+                password == null || password.isEmpty() || password.isBlank()) {
+            throw new InvalidFieldException("User with invalid fields: null, empty or blank");
+        }
 
         Optional<Users> usersOptional = this.repository.findByEmail(user.getEmail());
         if (usersOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("Records already found for this user: user already exists");
         }
 
-        if (user.getName().isEmpty() || user.getName().isBlank() || user.getEmail().isEmpty()
-                || user.getEmail().isBlank() || user.getPassword().isEmpty() || user.getPassword().isBlank()) {
-            throw new InvalidFieldException("User with invalid fields: null, empty or blank");
-        }
-
         user = user.toBuilder().password(this.encoder.encode(user.getPassword())).build();
 
         log.info("Creating user: {}", user);
         Users savedUser = this.repository.save(user);
-        walletService.create(user);
+        rabbitTemplate.convertAndSend("WalletQueue", user.getEmail());
 
         return savedUser;
     }
@@ -70,7 +68,7 @@ public class UsersService implements UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID: user does not exists"));
 
         return this.repository.save(Users.builder()
-                .Id(entity.getId())
+                .id(entity.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(this.encoder.encode(user.getPassword()))
