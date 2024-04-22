@@ -2,9 +2,7 @@ package br.com.sysmap.bootcamp.web;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,10 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.sysmap.bootcamp.domain.entities.Users;
 import br.com.sysmap.bootcamp.domain.service.UsersService;
@@ -40,50 +34,6 @@ public class UsersControllerTest {
     @MockBean
     private UsersService usersService;
 
-    @Autowired
-    private PasswordEncoder encoder;
-
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    public void setup() {
-        objectMapper = new ObjectMapper();
-    }
-
-    // create tests
-    // @Test
-    // @DisplayName("Should return users when valid users is created")
-    // public void shouldReturnUsersWhenValidUsersIsCreated() throws Exception {
-    //     Users user = Users.builder().id(1L).name("test").email("test").password("test").build();
-    //     Users savedUser = Users.builder().id(1L).name("test").email("test").password(encoder.encode("test")).build();
-
-    //     Mockito.when(usersService.create(user)).thenReturn(savedUser);
-
-    //     mockMvc.perform(post("/users/create")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(user)))
-    //             .andExpect(status().isCreated())
-    //             .andExpect(jsonPath("$.id").value(savedUser.getId()))
-    //             .andExpect(jsonPath("$.name").value(savedUser.getName()))
-    //             .andExpect(jsonPath("$.email").value(savedUser.getEmail()));
-
-    //     assertTrue(encoder.matches("test", savedUser.getPassword()));
-    // }
-
-    // @Test
-    // @DisplayName("Should throw InvalidFieldException when creating user with missing or invalid fields")
-    // public void shouldThrowInvalidFieldExceptionWhenCreatingUserWithMissingOrInvalidFields() throws Exception {
-    //     Users invalidUser = Users.builder().build();
-
-    //     mockMvc.perform(post("/users/create")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(invalidUser)))
-    //             .andExpect(status().isBadRequest());
-    // }
-
-    // update tests
-
-    // list users tests
     @Test
     @DisplayName("Should return list of users")
     public void shouldReturnListOfUsers() throws Exception {
@@ -131,7 +81,5 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.email", is(user.getEmail())));
     }
-
-    // auth tests
 
 }

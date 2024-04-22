@@ -7,8 +7,6 @@ import br.com.sysmap.bootcamp.dto.WalletDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// import java.math.BigDecimal;
-
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
@@ -18,20 +16,13 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 public class WalletListener {
 
     private final WalletService walletService;
-    // provisório, essa inejcção de dependencias não poderia estar aqui
+    // provisório, essa inejeção de dependencias não poderia estar aqui
     private final UsersService usersService;
 
-    // A validação de saldo está com problemas, o album está sendo criado mesmo com
-    // saldo insuficiente, é um problema no método save de AlbumService
     @RabbitHandler
     public void receive(WalletDto walletDto) {
-        // BigDecimal value = walletDto.getValue();
-        // if (walletService.isBalanceSufficient(value)) {
         log.info("Debiting wallet: {}", walletDto);
         walletService.debit(walletDto);
-        // } else {
-        // throw new RuntimeException("Insufficient balance to make the purchase");
-        // }
     }
 
     @RabbitHandler

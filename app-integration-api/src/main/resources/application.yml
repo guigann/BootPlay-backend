@@ -1,8 +1,10 @@
-
 spring:
     application:
         name:
             Bootcamp Sysmap 2024 - Guilherme Campos de Melo
+    main:
+        allow-bean-definition-overriding: true
+        allow-circular-references: true
 
 server:
     port: 8082

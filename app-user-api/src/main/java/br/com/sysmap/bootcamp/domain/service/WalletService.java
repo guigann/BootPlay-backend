@@ -32,8 +32,6 @@ public class WalletService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Wallet create(Users user) {
-        // Talvez nao seja necessaria essa validacao, pois o usuario ainda nao foi
-        // criado, e sua existencia ja havia sido validada
         Optional<Wallet> walletOptional = this.repository.findByUsers(user);
         if (walletOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("Records already found for this user: user already have a wallet");
@@ -64,7 +62,6 @@ public class WalletService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void debit(WalletDto walletDto) {
         Users user = usersService.findByEmail(walletDto.getEmail());
-
         Wallet wallet = getWallet(user);
 
         wallet.setBalance(wallet.getBalance().subtract(walletDto.getValue()));
@@ -72,7 +69,6 @@ public class WalletService {
         LocalDateTime date = LocalDateTime.now();
         wallet.setPoints(Long.sum(wallet.getPoints(), Points.getPoints(date.getDayOfWeek())));
         wallet.setLastUpdate(date);
-
         repository.save(wallet);
     }
 
@@ -95,13 +91,5 @@ public class WalletService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("No records for this user: user does not have a wallet"));
     }
-
-    // @Transactional(propagation = Propagation.REQUIRED)
-    // public boolean isBalanceSufficient(BigDecimal value) {
-    // Wallet wallet = repository.findByUsers(getUser())
-    // .orElseThrow(() -> new ResourceNotFoundException("No records for this
-    // user"));
-
-    // return wallet.getBalance().compareTo(value) >= 0;
-    // }
+    
 }

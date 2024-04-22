@@ -44,6 +44,7 @@ public class AlbumService {
         Users user = getUser();
         album.setUsers(user);
         WalletDto walletDto = new WalletDto(user.getEmail(), album.getValue());
+        
         template.convertAndSend(queue.getName(), walletDto);
 
         log.info("Creating album: {}", album);

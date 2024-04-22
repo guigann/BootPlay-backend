@@ -39,7 +39,7 @@ public class UsersService implements UserDetailsService {
         String name = user.getName();
         String email = user.getEmail();
         String password = user.getPassword();
-        
+
         if (name == null || name.isEmpty() || name.isBlank() ||
                 email == null || email.isEmpty() || email.isBlank() ||
                 password == null || password.isEmpty() || password.isBlank()) {
@@ -99,13 +99,14 @@ public class UsersService implements UserDetailsService {
         StringBuilder password = new StringBuilder().append(user.getEmail()).append(":").append(user.getPassword());
 
         return AuthDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .token(Base64.getEncoder()
                         .withoutPadding()
                         .encodeToString(password
                                 .toString()
                                 .getBytes()))
-                .id(user.getId())
                 .build();
     }
 
