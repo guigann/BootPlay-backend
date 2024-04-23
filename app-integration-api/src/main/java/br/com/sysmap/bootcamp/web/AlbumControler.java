@@ -31,7 +31,7 @@ public class AlbumControler {
 
     @Operation(summary = "Buy an album")
     @PostMapping("/sale")
-    public ResponseEntity<Album> save(@RequestBody Album album) {
+    public ResponseEntity<Album> save(@RequestBody Album album) throws ParseException, SpotifyWebApiException, IOException {
         return ResponseEntity.ok(this.albumService.save(album));
     }
 

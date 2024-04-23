@@ -13,7 +13,13 @@ This system was developed during the full-stack bootcamp offered by SysMap Solut
 ```
 git clone https://github.com/bc-fullstack-04/guilherme-campos-backend.git
 ```
-2. Build up with docker
+2. Make sure that maven is installed in the project and that the .jar files are generated in the **/target** folder in both apis, otherwise, perform the step below:
+```
+mvn clean
+mvn install
+mvn package
+```
+3. Build up with docker
 ```
 docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up

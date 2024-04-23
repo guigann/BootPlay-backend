@@ -35,16 +35,20 @@ public class AlbumService {
     private final UsersService usersService;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Album save(Album album) {
-        Album albumOptional = this.repository.findByIdSpotify(album.getIdSpotify());
-        if (albumOptional != null) {
-            throw new ResourceAlreadyExistsException("Records already found for this ID: this album already has an owner");
+    public Album save(Album album) throws ParseException, SpotifyWebApiException, IOException {
+        List<Album> userAlbums = getAlbums();
+
+        for (Album userAlbum : userAlbums) {
+            if (userAlbum.getIdSpotify().equals(album.getIdSpotify())) {
+                throw new ResourceAlreadyExistsException(
+                        "Records already found for this ID: This user already owns this album");
+            }
         }
 
         Users user = getUser();
         album.setUsers(user);
         WalletDto walletDto = new WalletDto(user.getEmail(), album.getValue());
-        
+
         template.convertAndSend(queue.getName(), walletDto);
 
         log.info("Creating album: {}", album);
@@ -63,7 +67,7 @@ public class AlbumService {
         return this.spotifyApi.getAlbums(search);
     }
 
-    private Users getUser() {
+    protected Users getUser() {
         String username = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal().toString();
         return usersService.findByEmail(username);

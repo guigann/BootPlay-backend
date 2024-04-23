@@ -1,5 +1,15 @@
 package br.com.sysmap.bootcamp.domain.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.sysmap.bootcamp.domain.entities.Points;
 import br.com.sysmap.bootcamp.domain.entities.Users;
 import br.com.sysmap.bootcamp.domain.entities.Wallet;
@@ -9,15 +19,6 @@ import br.com.sysmap.bootcamp.domain.repository.WalletRepository;
 import br.com.sysmap.bootcamp.dto.WalletDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -31,7 +32,8 @@ public class WalletService {
     private final UsersService usersService;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Wallet create(Users user) {
+    public Wallet create(String email) {
+        Users user = usersService.findByEmail(email);
         Optional<Wallet> walletOptional = this.repository.findByUsers(user);
         if (walletOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("Records already found for this user: user already have a wallet");
@@ -81,15 +83,19 @@ public class WalletService {
     }
 
     private Users getUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal().toString();
-        return usersService.findByEmail(username);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            String username = authentication.getPrincipal().toString();
+            return usersService.findByEmail(username);
+        } else {
+            throw new ResourceNotFoundException("No records found: there is no authenticated user");
+        }
     }
 
     private Wallet getWallet(Users user) {
         return this.repository.findByUsers(user)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("No records for this user: user does not have a wallet"));
+                        () -> new ResourceNotFoundException("No records found for this user: user does not have a wallet"));
     }
-    
+
 }
