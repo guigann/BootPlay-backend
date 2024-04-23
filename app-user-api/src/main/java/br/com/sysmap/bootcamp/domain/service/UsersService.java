@@ -48,7 +48,7 @@ public class UsersService implements UserDetailsService {
 
         Optional<Users> usersOptional = this.repository.findByEmail(user.getEmail());
         if (usersOptional.isPresent()) {
-            throw new ResourceAlreadyExistsException("Records already found for this user: user already exists");
+            throw new ResourceAlreadyExistsException("Records already found for this email: user with this email already exists");
         }
 
         user = user.toBuilder().password(this.encoder.encode(user.getPassword())).build();

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 import br.com.sysmap.bootcamp.domain.listeners.WalletListener;
-import br.com.sysmap.bootcamp.domain.service.UsersService;
 import br.com.sysmap.bootcamp.domain.service.WalletService;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class RabbitConfig {
     }
 
     @Bean
-    public WalletListener receiver(WalletService walletService, UsersService usersService) {
-        return new WalletListener(walletService, usersService);
+    public WalletListener receiver(WalletService walletService) {
+        return new WalletListener(walletService);
     }
 
     @Bean
