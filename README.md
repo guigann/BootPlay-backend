@@ -1,4 +1,4 @@
-## Backend Project - Guilherme Campos de Melo
+## Backend for <a href='https://github.com/guigann/BootPlay' target='_blank'>Bootplay</a>, an albums E-Commerce.
 
 ### Description
 This system was developed during the full-stack bootcamp offered by SysMap Solutions. It offers a comprehensive solution for managing album sales, complete with a loyalty points system.
