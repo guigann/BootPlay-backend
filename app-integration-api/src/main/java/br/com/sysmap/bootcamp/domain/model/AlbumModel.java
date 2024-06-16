@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Data
 public class AlbumModel {
 
+    private String name;
     private AlbumType albumType;
     private ArtistSimplified[] artists;
     private ExternalUrl externalUrl;
