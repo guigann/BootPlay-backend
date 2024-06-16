@@ -23,7 +23,7 @@ services:
 
   bootcamp-user-api:
     build:
-      context: ../bootcamp-sysmap/app-user-api
+      context: /app-user-api
       dockerfile: ../app-user-api/Dockerfile
     image: guigan/app-user-api:latest
     ports:
@@ -42,7 +42,7 @@ services:
 
   bootcamp-integration-api:
     build:
-      context: ../bootcamp-sysmap/app-integration-api
+      context: /app-integration-api
       dockerfile: ../app-integration-api/Dockerfile
     image: guigan/app-integration-api:latest
     ports:
